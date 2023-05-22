@@ -1,0 +1,19 @@
+{
+    "schema_version": "v1",
+    "name_for_human": "Speaky",
+    "name_for_model": "Speaky",
+    "description_for_human": "Plugin to enable ChatGPT to talk! Learn languages and more!",
+    "description_for_model": "Plugin to enable ChatGPT to talk! Learn languages and more!",
+    "auth": {
+      "type": "none"
+    },
+    "api": {
+      "type": "openapi",
+      "url": "http://localhost:8080/public/openapi.yaml",
+      "is_user_authenticated": false
+    },
+    "logo_url": "http://localhost:8080/public/logo.png",
+    "contact_email": "Lyndon@zug.dev",
+    "legal_info_url": "http://zug.dev/legal"
+  }
+  

@@ -4,12 +4,12 @@ info:
   description: A plugin that lets you learn languages by listening to the pronunciation of words and phrases.
   version: 'v1'
 servers:
-  - url: http://localhost:5003
+  - url: http://localhost:8080
 paths:
   /tts:
     post:
       operationId: textToSpeech
-      summary: "Convert text to speech, and returns a link to the audio, example voices: en-US-Neural2-A, en-US-Neural2-C, en-GB-Neural2-B, en-GB-Neural2-A, en-AU-Neural2-B, en-AU-Neural2-A, fr-FR-Neural2-B, fr-FR-Neural2-A, fr-CA-Neural2-B, fr-CA-Neural2-A"
+      summary: "Convert text to speech, and returns a link to the audio. Example voices: en-US-Neural2-A, en-US-Neural2-C, en-GB-Neural2-B, en-GB-Neural2-A, en-AU-Neural2-B, en-AU-Neural2-A, fr-FR-Neural2-B, fr-FR-Neural2-A, fr-CA-Neural2-B, fr-CA-Neural2-A."
       requestBody:
         required: true
         content:
@@ -26,7 +26,10 @@ paths:
                 properties:
                   audio_url:
                     type: string
-                    description: The link to the audio file.
+                    description: The link to the audio file. Which the user can be linked.
+                  doc_ref:
+                    type: string
+                    description: The Firestore document reference.
 
   /listVoices/{language_code}:
     get:
@@ -65,28 +68,34 @@ components:
     textToSpeechRequest:
       type: object
       required:
-      - voice_name
+      - voiceName
       - text
+      - TextTranslated
       properties:
-        voice_name:
+        voiceName:
           type: string
           description: The name of the voice to use for text-to-speech conversion. Such as en-GB-Neural2-A
         text:
           type: string
-          description: The text to convert to speech.
+          description: The original text.
+        TextTranslated:
+          type: string
+          description: The translated text or the text to use for text-to-speech conversion.
     listVoiceResponse:
       type: object
       properties:
-        languages:
-          type: string
-          description: The languages supported by the voice, separated by commas.
         name:
           type: string
           description: The name of the voice.
-        gender:
+        languageCode:
+          type: array
+          items:
+            type: string
+          description: The languages supported by the voice.
+        ssmlGender:
           type: string
           description: The gender of the voice.
-        rate:
+        naturalSampleRateHertz:
           type: integer
           format: int32
           description: The natural sample rate of the voice, in hertz.
