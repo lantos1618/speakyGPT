@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -250,7 +249,7 @@ func handleTTS(ttsClient *texttospeech.Client, fsClient *firestore.Client, bucke
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"audioUrl": "http://localhost:8080/audio/" + data.FileName,
+			"audioUrl": "https://speakyGPT.zug.dev/audio/" + data.FileName,
 			"docRef":   docRef,
 		})
 	}
@@ -289,17 +288,21 @@ func handleDisplayAudio(fsClient *firestore.Client, bucket *storage.BucketHandle
 }
 
 func main() {
-	// load environment variables
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
+	// Load environment variables from .env file
+	// if local we need to load the .env file
+	// otherwise the env variables are already set
+	if os.Getenv("GCP_PROJECT") == "" {
+		err := godotenv.Load()
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	r := gin.Default()
 
 	// Enable CORS for all origins
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"https://chat.openai.com", "http://localhost:3000", "http://localhost:8080"}
+	config.AllowOrigins = []string{"https://chat.openai.com", "http://localhost:3000", "https://speakyGPT.zug.dev"}
 	config.AllowCredentials = true
 	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}
 	config.AllowHeaders = []string{"*"}
@@ -318,7 +321,7 @@ func main() {
 	defer ttsClient.Close()
 
 	// Initialize Firestore client, used to store audio files
-	projectName := os.Getenv("GOOGLE_PROJECT_ID")
+	projectName := os.Getenv("GCP_PROJECT")
 	fsClient, err := firestore.NewClient(ctx, projectName)
 	if err != nil {
 		panic(err)
@@ -332,7 +335,7 @@ func main() {
 	}
 	defer storageClient.Close()
 
-	bucketName := os.Getenv("FIREBASE_STORAGE_BUCKET")
+	bucketName := os.Getenv("GCP_BUCKET")
 	bucket := storageClient.Bucket(bucketName)
 
 	// Load the HTML template

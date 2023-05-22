@@ -156,9 +156,13 @@ func TestSynthesizeSpeech(t *testing.T) {
 
 func TestUploadAudio(t *testing.T) {
 	// Load environment variables from .env file
-	err := godotenv.Load()
-	if err != nil {
-		t.Fatalf("Error loading .env file: %v", err)
+	// if local we need to load the .env file
+	// otherwise the env variables are already set
+	if os.Getenv("GCP_PROJECT") == "" {
+		err := godotenv.Load()
+		if err != nil {
+			t.Fatalf("Error loading .env file: %v", err)
+		}
 	}
 
 	ctx := context.Background()
@@ -175,7 +179,7 @@ func TestUploadAudio(t *testing.T) {
 		t.Fatalf("Failed to create Storage client: %v", err)
 	}
 
-	googleProjectId := os.Getenv("GOOGLE_PROJECT_ID")
+	googleProjectId := os.Getenv("GCP_PROJECT")
 	// Initialize the Firestore client
 	fsClient, err := firestore.NewClient(ctx, googleProjectId)
 	if err != nil {
@@ -183,7 +187,7 @@ func TestUploadAudio(t *testing.T) {
 	}
 
 	// Get a handle to the Firebase Storage bucket
-	bucketName := os.Getenv("FIREBASE_STORAGE_BUCKET")
+	bucketName := os.Getenv("GCP_BUCKET")
 	bucket := storageClient.Bucket(bucketName)
 
 	// Generate fake audio content
