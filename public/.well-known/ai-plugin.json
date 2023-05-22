@@ -1,0 +1,19 @@
+{
+    "schema_version": "v1",
+    "name_for_human": "Speaky",
+    "name_for_model": "Speaky",
+    "description_for_human": "Plugin to enable ChatGPT to talk!",
+    "description_for_model": "Plugin to enable ChatGPT to talk!",
+    "auth": {
+      "type": "none"
+    },
+    "api": {
+      "type": "openapi",
+      "url": "http://localhost:5003/openapi.yaml",
+      "is_user_authenticated": false
+    },
+    "logo_url": "http://localhost:5003/logo.png",
+    "contact_email": "legal@example.com",
+    "legal_info_url": "http://example.com/legal"
+  }
+  

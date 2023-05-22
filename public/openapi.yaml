@@ -1,0 +1,92 @@
+openapi: 3.0.1
+info:
+  title: Speaky Plugin lets you learn languages Text-to-Speech
+  description: A plugin that lets you learn languages by listening to the pronunciation of words and phrases.
+  version: 'v1'
+servers:
+  - url: http://localhost:5003
+paths:
+  /tts:
+    post:
+      operationId: textToSpeech
+      summary: "Convert text to speech, and returns a link to the audio, example voices: en-US-Neural2-A, en-US-Neural2-C, en-GB-Neural2-B, en-GB-Neural2-A, en-AU-Neural2-B, en-AU-Neural2-A, fr-FR-Neural2-B, fr-FR-Neural2-A, fr-CA-Neural2-B, fr-CA-Neural2-A"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/textToSpeechRequest'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  audio_url:
+                    type: string
+                    description: The link to the audio file.
+
+  /listVoices/{language_code}:
+    get:
+      operationId: listVoicesByLanguage
+      summary: List available voices for a specific language.
+      parameters:
+        - name: language_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/listVoiceResponse'
+  /listLanguages:
+    get:
+      operationId: listLanguages
+      summary: List available languages.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+components:
+  schemas:
+    textToSpeechRequest:
+      type: object
+      required:
+      - voice_name
+      - text
+      properties:
+        voice_name:
+          type: string
+          description: The name of the voice to use for text-to-speech conversion. Such as en-GB-Neural2-A
+        text:
+          type: string
+          description: The text to convert to speech.
+    listVoiceResponse:
+      type: object
+      properties:
+        languages:
+          type: string
+          description: The languages supported by the voice, separated by commas.
+        name:
+          type: string
+          description: The name of the voice.
+        gender:
+          type: string
+          description: The gender of the voice.
+        rate:
+          type: integer
+          format: int32
+          description: The natural sample rate of the voice, in hertz.
