@@ -125,12 +125,10 @@ func TestSynthesizeSpeech(t *testing.T) {
 
 	// Call the synthesizeSpeech function
 	voiceName := "fr-FR-Neural2-A"
-	text := "Hello"
-	textTranslated := "Bonjour"
+	textNative := "Hello"
 	audioContent, err := synthesizeSpeech(ttsClient, &TTSRequest{
-		VoiceName:      voiceName,
-		Text:           text,
-		TextTranslated: textTranslated,
+		VoiceName:  voiceName,
+		TextNative: textNative,
 	})
 	if err != nil {
 		t.Fatalf("synthesizeSpeech() error = %v, want nil", err)
@@ -150,7 +148,7 @@ func TestSynthesizeSpeech(t *testing.T) {
 	}
 
 	// Save the audio content to a local file in the test_audio directory
-	localFilename := audioFolder + getHash(voiceName, text) + ".mp3"
+	localFilename := audioFolder + getHash(voiceName, textNative) + ".mp3"
 	if err := os.WriteFile(localFilename, audioContent, 0644); err != nil {
 		t.Fatalf("Failed to write audio content to local file: %v", err)
 	}
@@ -190,20 +188,18 @@ func TestUploadAudio(t *testing.T) {
 
 	// Generate fake audio content
 	voiceName := "fr-FR-Neural2-A"
-	text := "Hello!"
-	textTranslated := "Bonjour!"
-	filename := getHash(voiceName, text) + ".mp3"
+	textNative := "Hello!"
+	filename := getHash(voiceName, textNative) + ".mp3"
 	audioContent, err := synthesizeSpeech(ttsClient, &TTSRequest{
-		VoiceName:      voiceName,
-		Text:           text,
-		TextTranslated: textTranslated,
+		VoiceName:  voiceName,
+		TextNative: textNative,
 	})
 	if err != nil {
 		t.Fatalf("synthesizeSpeech() error = %v, want nil", err)
 	}
 
 	// Call the fireBaseUploadAudio function
-	docRef, data, err := fireBaseUploadAudio(fsClient, bucket, voiceName, text, textTranslated, filename, audioContent)
+	docRef, data, err := fireBaseUploadAudio(fsClient, bucket, voiceName, textNative, filename, audioContent)
 	if err != nil {
 		t.Fatalf("fireBaseUploadAudio() error = %v, want nil", err)
 	}

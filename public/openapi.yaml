@@ -70,17 +70,13 @@ components:
       required:
       - voiceName
       - textNative
-      - textTranslated
       properties:
         voiceName:
           type: string
           description: The name of the voice to use for text-to-speech conversion. Such as en-GB-Neural2-A
         textNative:
           type: string
-          description: The original text. This should be the source language or the users native language.
-        textTranslated:
-          type: string
-          description: The translated text or the text to use for text-to-speech conversion. This should be the target language or the language the user is trying to learn.
+          description: The original text. This should be the source language or the users native language. This is used to generate the audio file.
     listVoiceResponse:
       type: object
       properties:
