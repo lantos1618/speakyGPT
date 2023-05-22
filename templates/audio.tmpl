@@ -4,17 +4,16 @@
     <title>Text-to-Speech Audio</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-200 flex items-center justify-center h-screen">
-    <div class="bg-white p-8 rounded shadow text-center">
+<body class="bg-gray-600 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded shadow text-left ">
         <img src="/public/logo.png" alt="speaky_logo.png" class="w-32 h-32 rounded-full mx-auto mb-4">
-       
-        <div class="text-left">
-            <p class="mb-4"><strong>Sentence:</strong> {{.textNative}}</p>
+        <p class="mb-4"><strong>Sentence:</strong> {{.textNative}}</p>
+        <div class="flex items-center justify-center">
+            <audio controls>
+                <source src="{{.audioUrl}}" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
         </div>
-        <audio controls>
-            <source src="{{.audioUrl}}" type="audio/mpeg">
-            Your browser does not support the audio element.
-        </audio>
     </div>
 </body>
 </html>
