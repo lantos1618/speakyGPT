@@ -6,7 +6,7 @@ info:
 servers:
   - url: https://speakyGPT.zug.dev
 paths:
-  /tts:
+  /api/tts:
     post:
       operationId: textToSpeech
       summary: "Convert text to speech, and returns a link to the audio. Example voices: en-US-Neural2-A, en-US-Neural2-C, en-GB-Neural2-B, en-GB-Neural2-A, en-AU-Neural2-B, en-AU-Neural2-A, fr-FR-Neural2-B, fr-FR-Neural2-A, fr-CA-Neural2-B, fr-CA-Neural2-A."
@@ -31,7 +31,7 @@ paths:
                     type: string
                     description: The Firestore document reference.
 
-  /listVoices/{languageCode}:
+  /api/listVoices/{languageCode}:
     get:
       operationId: listVoicesByLanguage
       summary: "List available voices for a specific language. Language codes example: en-US, en-GB, en-AU, fr-FR, fr-CA."
@@ -50,7 +50,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/listVoiceResponse'
-  /listLanguages:
+  /api/listLanguages:
     get:
       operationId: listLanguages
       summary: List available languages. 

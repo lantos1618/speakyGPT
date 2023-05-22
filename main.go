@@ -10,8 +10,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 
-	"github.com/joho/godotenv"
-
 	"cloud.google.com/go/firestore"
 	"cloud.google.com/go/storage"
 	texttospeech "cloud.google.com/go/texttospeech/apiv1"
@@ -291,12 +289,12 @@ func main() {
 	// Load environment variables from .env file
 	// if local we need to load the .env file
 	// otherwise the env variables are already set
-	if os.Getenv("GCP_PROJECT") == "" {
-		err := godotenv.Load()
-		if err != nil {
-			panic(err)
-		}
-	}
+	// if os.Getenv("GCP_PROJECT") == "" {
+	// 	err := goapp/main.go:325env.Load()
+	// 	if err != nil {
+	// 		panic(err)
+	// 	}
+	// }
 
 	r := gin.Default()
 

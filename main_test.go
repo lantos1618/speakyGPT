@@ -4,14 +4,12 @@ import (
 	"context"
 	"fmt"
 
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 
 	"cloud.google.com/go/firestore"
 	"cloud.google.com/go/storage"
@@ -30,10 +28,10 @@ func TestGetHash(t *testing.T) {
 
 func TestHandleListLanguages(t *testing.T) {
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
 
 	// Create a Gin engine
 	gin.SetMode(gin.TestMode)
@@ -110,10 +108,10 @@ func TestGetVoice(t *testing.T) {
 
 func TestSynthesizeSpeech(t *testing.T) {
 	// Load environment variables from .env file
-	err := godotenv.Load()
-	if err != nil {
-		t.Fatalf("Error loading .env file: %v", err)
-	}
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	t.Fatalf("Error loading .env file: %v", err)
+	// }
 
 	ctx := context.Background()
 
@@ -158,12 +156,12 @@ func TestUploadAudio(t *testing.T) {
 	// Load environment variables from .env file
 	// if local we need to load the .env file
 	// otherwise the env variables are already set
-	if os.Getenv("GCP_PROJECT") == "" {
-		err := godotenv.Load()
-		if err != nil {
-			t.Fatalf("Error loading .env file: %v", err)
-		}
-	}
+	// if os.Getenv("GCP_PROJECT") == "" {
+	// 	err := godotenv.Load()
+	// 	if err != nil {
+	// 		t.Fatalf("Error loading .env file: %v", err)
+	// 	}
+	// }
 
 	ctx := context.Background()
 
