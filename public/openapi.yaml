@@ -24,19 +24,19 @@ paths:
               schema:
                 type: object
                 properties:
-                  audio_url:
+                  audioUrl:
                     type: string
                     description: The link to the audio file. Which the user can be linked.
-                  doc_ref:
+                  docRef:
                     type: string
                     description: The Firestore document reference.
 
-  /listVoices/{language_code}:
+  /listVoices/{languageCode}:
     get:
       operationId: listVoicesByLanguage
-      summary: List available voices for a specific language.
+      summary: "List available voices for a specific language. Language codes example: en-US, en-GB, en-AU, fr-FR, fr-CA."
       parameters:
-        - name: language_code
+        - name: languageCode
           in: path
           required: true
           schema:
@@ -53,7 +53,7 @@ paths:
   /listLanguages:
     get:
       operationId: listLanguages
-      summary: List available languages.
+      summary: List available languages. 
       responses:
         "200":
           description: OK
@@ -69,18 +69,18 @@ components:
       type: object
       required:
       - voiceName
-      - text
-      - TextTranslated
+      - textNative
+      - textTranslated
       properties:
         voiceName:
           type: string
           description: The name of the voice to use for text-to-speech conversion. Such as en-GB-Neural2-A
-        text:
+        textNative:
           type: string
-          description: The original text. This should be the source language.
-        TextTranslated:
+          description: The original text. This should be the source language or the users native language.
+        textTranslated:
           type: string
-          description: The translated text or the text to use for text-to-speech conversion. This should be the target language.
+          description: The translated text or the text to use for text-to-speech conversion. This should be the target language or the language the user is trying to learn.
     listVoiceResponse:
       type: object
       properties:

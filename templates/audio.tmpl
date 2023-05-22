@@ -9,11 +9,11 @@
         <img src="/public/logo.png" alt="speaky_logo.png" class="w-32 h-32 rounded-full mx-auto mb-4">
        
         <div class="text-left">
-            <p class="mb-4"><strong>Sentence:</strong> {{.text}}</p>
+            <p class="mb-4"><strong>Sentence:</strong> {{.textNative}}</p>
             <p class="mb-4"><strong>Translated:</strong> {{.textTranslated}}</p>
         </div>
         <audio controls>
-            <source src="{{.audio_url}}" type="audio/mpeg">
+            <source src="{{.audioUrl}}" type="audio/mpeg">
             Your browser does not support the audio element.
         </audio>
     </div>

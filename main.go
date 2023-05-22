@@ -32,8 +32,17 @@ func handleListVoices(ttsClient *texttospeech.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := context.Background()
 
+		// get the language code from the url query string
+		languageCode := c.Param("languageCode")
+		fmt.Println("languageCode", languageCode)
+		if languageCode == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "languageCode is required"})
+			return
+		}
 		// Get the list of voices
-		resp, err := ttsClient.ListVoices(ctx, &texttospeechpb.ListVoicesRequest{})
+		resp, err := ttsClient.ListVoices(ctx, &texttospeechpb.ListVoicesRequest{
+			LanguageCode: languageCode,
+		})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -95,7 +104,7 @@ func handleListLanguages(ttsClient *texttospeech.Client) gin.HandlerFunc {
 
 type TTSRequest struct {
 	VoiceName      string `json:"voiceName" binding:"required"`
-	Text           string `json:"text" binding:"required"`
+	TextNative     string `json:"textNative" binding:"required"`
 	TextTranslated string `json:"textTranslated" binding:"required"`
 }
 
@@ -139,37 +148,17 @@ func synthesizeSpeech(ttsClient *texttospeech.Client, ttsRequest *TTSRequest) ([
 	return resp.AudioContent, nil
 }
 
-// func uploadAudio(bucket *storage.BucketHandle, filename string, audioContent []byte) error {
-// 	ctx := context.Background()
-// 	obj := bucket.Object(filename)
-// 	w := obj.NewWriter(ctx)
-// 	if _, err := w.Write(audioContent); err != nil {
-// 		return err
-// 	}
-// 	if err := w.Close(); err != nil {
-// 		return err
-// 	}
-
-// 	return nil
-// }
-
 type TTSObject struct {
 	VoiceName      string `json:"voiceName"`
-	Text           string `json:"text"`
+	TextNative     string `json:"textNative"`
 	TextTranslated string `json:"textTranslated"`
-	FileName       string `json:"file_name"`
-	AudioRef       string `json:"audio_ref"`
+	FileName       string `json:"fileName"`
+	AudioRef       string `json:"audioRef"`
 	URL            string `json:"url"`
 }
 
-func fireBaseUploadAudio(fsClient *firestore.Client, bucket *storage.BucketHandle, voiceName, text, textTranslated, filename string, audioContent []byte) (*firestore.DocumentRef, *TTSObject, error) {
+func fireBaseUploadAudio(fsClient *firestore.Client, bucket *storage.BucketHandle, voiceName, textNative, textTranslated, filename string, audioContent []byte) (*firestore.DocumentRef, *TTSObject, error) {
 	ctx := context.Background()
-
-	// fmt.Println("voiceName: ", voiceName)
-	// fmt.Println("text: ", text)
-	// fmt.Println("textTranslated: ", textTranslated)
-	// fmt.Println("filename: ", filename)
-	// fmt.Println("audioContent", getHash(string(audioContent), ""))
 
 	// Upload the audio file to Firebase Storage
 	obj := bucket.Object(filename)
@@ -207,7 +196,7 @@ func fireBaseUploadAudio(fsClient *firestore.Client, bucket *storage.BucketHandl
 	// Store a document reference in Firestore
 	data := TTSObject{
 		VoiceName:      voiceName,
-		Text:           text,
+		TextNative:     textNative,
 		TextTranslated: textTranslated,
 		FileName:       filename,
 		AudioRef:       "gs://" + bucketAttrs.Name + "/" + filename,
@@ -239,14 +228,14 @@ func handleTTS(ttsClient *texttospeech.Client, fsClient *firestore.Client, bucke
 		fmt.Println(req)
 
 		voiceName := req.VoiceName
-		text := req.Text
+		textNative := req.TextNative
 		textTranslated := req.TextTranslated
-		filename := getHash(voiceName, text) + ".mp3"
+		filename := getHash(voiceName, textNative) + ".mp3"
 
 		// Synthesize speech
 		audioContent, err := synthesizeSpeech(ttsClient, &TTSRequest{
 			VoiceName:      voiceName,
-			Text:           text,
+			TextNative:     textNative,
 			TextTranslated: textTranslated,
 		})
 		if err != nil {
@@ -254,15 +243,15 @@ func handleTTS(ttsClient *texttospeech.Client, fsClient *firestore.Client, bucke
 			return
 		}
 
-		docRef, data, err := fireBaseUploadAudio(fsClient, bucket, voiceName, text, textTranslated, filename, audioContent)
+		docRef, data, err := fireBaseUploadAudio(fsClient, bucket, voiceName, textNative, textTranslated, filename, audioContent)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"audio_url": "http://localhost:8080/audio/" + data.FileName,
-			"doc_ref":   docRef,
+			"audioUrl": "http://localhost:8080/audio/" + data.FileName,
+			"docRef":   docRef,
 		})
 	}
 }
@@ -291,9 +280,9 @@ func handleDisplayAudio(fsClient *firestore.Client, bucket *storage.BucketHandle
 
 		// render some HTML to show the text and audio file
 		c.HTML(http.StatusOK, "audio.tmpl", gin.H{
-			"audio_url":      data.URL,
+			"audioUrl":       data.URL,
 			"voiceName":      data.VoiceName,
-			"text":           data.Text,
+			"textNative":     data.TextNative,
 			"textTranslated": data.TextTranslated,
 		})
 
@@ -350,7 +339,7 @@ func main() {
 	// Load the HTML template
 	r.LoadHTMLGlob("templates/*")
 
-	r.GET("/listVoices/:language_code", handleListVoices(ttsClient))
+	r.GET("/listVoices/:languageCode", handleListVoices(ttsClient))
 
 	r.GET("/listLanguages", handleListLanguages(ttsClient))
 
