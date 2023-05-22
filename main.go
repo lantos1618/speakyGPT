@@ -17,6 +17,8 @@ import (
 	"cloud.google.com/go/storage"
 	texttospeech "cloud.google.com/go/texttospeech/apiv1"
 	"cloud.google.com/go/texttospeech/apiv1/texttospeechpb"
+	"github.com/didip/tollbooth"
+	"github.com/didip/tollbooth_gin"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -103,8 +105,8 @@ func handleListLanguages(ttsClient *texttospeech.Client) gin.HandlerFunc {
 }
 
 type TTSRequest struct {
-	VoiceName  string `json:"voiceName" binding:"required"`
-	TextNative string `json:"textNative" binding:"required"`
+	VoiceName  string `json:"voiceName" binding:"required" maxlength:"256"`
+	TextNative string `json:"textNative" binding:"required" maxlength:"5000"`
 }
 
 func getLanguageCode(voiceName string) (string, error) {
@@ -336,13 +338,18 @@ func main() {
 	// Load the HTML template
 	r.LoadHTMLGlob("templates/*")
 
-	r.GET("/listVoices/:languageCode", handleListVoices(ttsClient))
+	api := r.Group("/api")
+	limiter := tollbooth.NewLimiter(0.0116, nil) // approximately 1000 requests/day
 
-	r.GET("/listLanguages", handleListLanguages(ttsClient))
+	api.Use(tollbooth_gin.LimitHandler(limiter))
 
-	r.POST("/tts", handleTTS(ttsClient, fsClient, bucket, bucketName))
+	api.GET("/listVoices/:languageCode", handleListVoices(ttsClient))
 
-	r.GET("/audio/:id", handleDisplayAudio(fsClient, bucket))
+	api.GET("/listLanguages", handleListLanguages(ttsClient))
+
+	api.POST("/tts", handleTTS(ttsClient, fsClient, bucket, bucketName))
+
+	api.GET("/audio/:id", handleDisplayAudio(fsClient, bucket))
 
 	// Serve files from the "public" directory
 	r.StaticFS("/public", http.Dir("public"))
