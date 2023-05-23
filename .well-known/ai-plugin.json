@@ -9,10 +9,10 @@
     },
     "api": {
       "type": "openapi",
-      "url": "https://speakyGPT.zug.dev/public/openapi.yaml",
+      "url": "https://speakygpt.zug.dev/public/openapi.yaml",
       "is_user_authenticated": false
     },
-    "logo_url": "https://speakyGPT.zug.dev/public/logo.png",
+    "logo_url": "https://speakygpt.zug.dev/public/logo.png",
     "contact_email": "Lyndon@zug.dev",
     "legal_info_url": "http://zug.dev/legal"
   }

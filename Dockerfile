@@ -1,31 +1,44 @@
-# Start from the latest Golang base image
-FROM golang:latest
+# Use the official Golang image to create a build artifact.
+# This is based on Debian and sets the GOPATH to /go.
+FROM golang:latest as builder
 
-# Add Maintainer Info
 LABEL maintainer="Lyndon L <lyndon@zug.dev>"
 
-# Set the Current Working Directory inside the container
+
+ARG TARGETOS
+ARG TARGETARCH
+
+# Create and change to the app directory.
 WORKDIR /app
 
-# Copy go mod and sum files
+# Retrieve application dependencies using go modules.
+# Allows container builds to reuse downloaded dependencies.
 COPY go.mod .
 COPY go.sum .
 COPY main.go .
 
 COPY public ./public
 COPY templates ./templates
-COPY .well-known ./well-known
+COPY .well-known ./.well-known
 
-# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
 RUN go mod download
 
-# Copy the source from the current directory to the Working Directory inside the container
+# Build the binary.
+# -mod=readonly ensures immutable go.mod and go.sum in container builds.
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -mod=readonly -v -o main
 
-# Build the Go app
-RUN go build -o main .
+# Use the official Alpine image for a lean production container.
+# https://hub.docker.com/_/alpine
+# https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
+FROM alpine:3
+RUN apk add --no-cache ca-certificates
 
-# Expose port 8080 to the outside world
-EXPOSE 8080
+# Copy the binary to the production image from the builder stage.
+COPY --from=builder /app/main /main
+COPY --from=builder /app/public /public
+COPY --from=builder /app/templates /templates
+COPY --from=builder /app/.well-known /.well-known 
 
-# Command to run the executable
-CMD ["./main"]
+
+# Run the web service on container startup.
+CMD ["/main"]

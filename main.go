@@ -248,7 +248,7 @@ func handleTTS(ttsClient *texttospeech.Client, fsClient *firestore.Client, bucke
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"audioUrl": "https://speakyGPT.zug.dev/audio/" + data.FileName,
+			"audioUrl": "https://speakygpt.zug.dev/api/audio/" + data.FileName,
 			"docRef":   docRef,
 		})
 	}

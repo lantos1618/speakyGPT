@@ -4,7 +4,7 @@ info:
   description: A plugin that lets you learn languages by listening to the pronunciation of words and phrases.
   version: 'v1'
 servers:
-  - url: https://speakyGPT.zug.dev
+  - url: https://speakygpt.zug.dev
 paths:
   /api/tts:
     post:

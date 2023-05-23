@@ -1,0 +1,21 @@
+{
+  "hosting": {
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "GOOGLE_APPLICATION_CREDENTIALS.json",
+      ".env"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "run": {
+          "serviceId": "speakygpt",
+          "region": "us-central1",
+          "pinTag": true
+        }
+      }
+    ]
+  }
+}
