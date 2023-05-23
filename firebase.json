@@ -11,7 +11,7 @@
       {
         "source": "**",
         "run": {
-          "serviceId": "speakygpt",
+          "serviceId": "speaky",
           "region": "us-central1",
           "pinTag": true
         }

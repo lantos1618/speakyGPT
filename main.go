@@ -248,7 +248,7 @@ func handleTTS(ttsClient *texttospeech.Client, fsClient *firestore.Client, bucke
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"audioUrl": "https://speakygpt.zug.dev/api/audio/" + data.FileName,
+			"audioUrl": "https://speaky.zug.dev/api/audio/" + data.FileName,
 			"docRef":   docRef,
 		})
 	}
@@ -304,9 +304,9 @@ func main() {
 	config.AllowOrigins = []string{
 		"https://chat.openai.com",
 		"http://localhost:3000",
-		"https://speakygpt.zug.dev",
-		"https://speakygpt.zug.dev:3000",
-		"https://speakygpt.zug.dev:8080",
+		"https://speaky.zug.dev",
+		"https://speaky.zug.dev:3000",
+		"https://speaky.zug.dev:8080",
 		"https://zug.dev",
 		"https://www.zug.dev",
 	}
