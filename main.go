@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"crypto/sha256"
@@ -300,7 +301,15 @@ func main() {
 
 	// Enable CORS for all origins
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"https://chat.openai.com", "http://localhost:3000", "https://speakyGPT.zug.dev"}
+	config.AllowOrigins = []string{
+		"https://chat.openai.com",
+		"http://localhost:3000",
+		"https://speakygpt.zug.dev",
+		"https://speakygpt.zug.dev:3000",
+		"https://speakygpt.zug.dev:8080",
+		"https://zug.dev",
+		"https://www.zug.dev",
+	}
 	config.AllowCredentials = true
 	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}
 	config.AllowHeaders = []string{"*"}
@@ -340,7 +349,13 @@ func main() {
 	r.LoadHTMLGlob("templates/*")
 
 	api := r.Group("/api")
-	limiter := tollbooth.NewLimiter(0.0116, nil) // approximately 1000 requests/day
+	// get rps limit from env or default to 10 convert to float64
+	rpsLimit, err := strconv.Atoi(os.Getenv("RPS_LIMIT"))
+	if err != nil {
+		rpsLimit = 10
+	}
+
+	limiter := tollbooth.NewLimiter(float64(rpsLimit), nil)
 
 	api.Use(tollbooth_gin.LimitHandler(limiter))
 
