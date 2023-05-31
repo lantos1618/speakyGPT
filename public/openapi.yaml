@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
-  title: Speaky Plugin lets you learn languages Text-to-Speech
-  description: A plugin that lets you learn languages by listening to the pronunciation of words and phrases.
+  title: Speaky lets you learn languages Text-to-Speech
+  description: Learn languages by listening to the pronunciation of words and phrases.
   version: 'v1'
 servers:
   - url: https://speaky.zug.dev
