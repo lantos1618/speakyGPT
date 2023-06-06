@@ -1,3 +1,4 @@
 .env
 GOOGLE_APPLICATION_CREDENTIALS.json
 test_audio/*
+firebase-debug.log

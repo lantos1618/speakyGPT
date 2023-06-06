@@ -2,8 +2,8 @@
     "schema_version": "v1",
     "name_for_human": "Speaky",
     "name_for_model": "Speaky",
-    "description_for_human": "Enable ChatGPT to talk! Learn languages and more!",
-    "description_for_model": "Enable ChatGPT to talk! Learn languages and more!",
+    "description_for_human": "Enable Speech to Learn languages and more!",
+    "description_for_model": "Enable Speech to Learn languages and more!",
     "auth": {
       "type": "none"
     },
